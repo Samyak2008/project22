@@ -1,47 +1,70 @@
-var bullet,wall,thickness;
-var speed,weight;
+var starImg, fairyImg, bgImg;
+var fairy , fairyVoice;
+var star, starBody;
+
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+
+function preload()
+{
+	starImg = loadImage("images/star.png");
+	fairyImg = loadAnimation("images/fairyImage1.png","images/fairyImage2.png");
+	bgImg = loadImage("images/starNight.png");
+	fairyVoice = loadSound("sound/JoyMusic.mp3");
+
+}
 
 function setup() {
+	createCanvas(800, 750);
 
-  createCanvas(1600,400);
+	// fairyVoice.play();
 
- 
+	fairy = createSprite(130, 520);
+	fairy.addAnimation("fairyflying",fairyImg);  
+	fairy.scale =0.25;
 
-  speed = random(223,321);
-  weight = random(30,52);
-  thickness = random(22,83);
+	star = createSprite(650,30);
+	star.addImage(starImg);
+	star.scale = 0.2;
 
-  bullet=createSprite(50,200,50,50);
-  bullet.velocityX=speed;
-  
-    wall=createSprite(1200,200,thickness,height/2);
-    wall.shapeColor=color(80,80,80);
+	engine = Engine.create();
+	world = engine.world;
+
+	starBody = Bodies.circle(650 , 30 , 5 , {restitution:0.5, isStatic:true});
+	World.add(world, starBody);
+	
+	Engine.run(engine);
+
 }
+
 
 function draw() {
-  background(255,255,255);  
-  if(hasCollided(bullet,wall)){
-    bullet.velocityX=0;
-    var damage = 0.5*weight*speed*speed/(thickness*thickness*thickness);
-      text("DAMAGE "+damage,400,150);
-    if(damage>10){
-      wall.shapeColor="red";
-    }
-    if(damage<10){
-      wall.shapeColor="green";
-    }
-  }
+  background(bgImg);
+  star.x=starBody.position.x;
+  star.y=starBody.position.y;
+  if(keyDown("left_arrow")){
+	fairy.x-=10; 
 
 
- 
-  drawSprites();
 }
-function hasCollided(lbullet,lwall){
-    bulletRightEdge=lbullet.x+lbullet.width;
-    wallLeftEdge=lwall.x;
-    if(bulletRightEdge>=wallLeftEdge)
-    {
-      return true
-    }
-    return false 
+if(keyDown("right_arrow")){
+	fairy.x+=10;
+
+	}
+	 if (starBody.position.y>470){
+		Matter.Body.setStatic(starBody,true)
+	 }
+  drawSprites()
+
+}
+
+function keyPressed() {
+	//write code here
+	if(keyCode===DOWN_ARROW){
+		Matter.Body.setStatic(starBody,false)
+	
+		}
+		
 }
